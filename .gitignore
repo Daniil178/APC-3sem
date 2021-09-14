@@ -1,52 +1,52 @@
-# Предварительные условия
+# Prerequisites
 *.d
 
-# Объектные файлы
+# Object files
 *.o
-*.ко
-*.возражение
-*.эльф
+*.ko
+*.obj
+*.elf
 
-# Вывод компоновщика
+# Linker output
 *.ilk
-*.карта
+*.map
 *.exp
 
-# Предварительно Скомпилированные заголовки
+# Precompiled Headers
 *.gch
 *.pch
 
-# Библиотеки
+# Libraries
 *.lib
 *.a
 *.la
 *.lo
 
-# Общие объекты (вкл. Библиотеки DLL Windows)
+# Shared objects (inc. Windows DLLs)
 *.dll
-*.итак
-*.итак.*
+*.so
+*.so.*
 *.dylib
 
-# Исполняемые файлы
+# Executables
 *.exe
-*.выход
-*.приложение
+*.out
+*.app
 *.i*86
 *.x86_64
-*.шестигранник
+*.hex
 
-# Отладочные файлы
+# Debug files
 *.dSYM/
 *.su
-*.ибр
+*.idb
 *.pdb
 
-# Результаты компиляции Модуля Ядра
-*.мод*
+# Kernel Module Compile Results
+*.mod*
 *.cmd
 .tmp_versions/
-модули.заказ
-Модуль.символы
-Mkfile.старый
+modules.order
+Module.symvers
+Mkfile.old
 dkms.conf
