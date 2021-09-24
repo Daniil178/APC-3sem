@@ -1,118 +1,145 @@
-#include "main.h"
+#include <stdio.h>
 
-
-void perebor(int a, int A[10], FILE *q, char s[65]){
-    char B[]= {'0','1','2','3','4','5','6','7','8','9'}, C[]= {'.', '-'};
-    if (a == 8) {
-        for (int i = 0; i < 10; ++i) {
-            s[A[0]] = B[i];
-            for (int j = 0; j < 10; ++j) {
-                s[A[1]] = B[j];
-                for (int k = 0; k < 10; ++k) {
-                    s[A[2]] = B[k];
-                    for (int h = 0; h < 10; ++h) {
-                        s[A[3]] = B[h];
-                        for (int g = 0; g < 2; ++g) {
-                            s[A[4]] = B[g];
-                            for (int v = 0; v < 10; ++v) {
-                                if (g == 0 && v > 0)
-                                    s[A[5]] = B[v];
-                                else if (g == 1 && v < 3)
-                                    s[A[5]] = B[v];
-                                for (int c = 0; c < 4; ++c) {
-                                    if (g == 0 && v == 2 && c < 3) {
-                                        s[A[6]] = B[c];
-                                        for (int n = 0; n < 9; ++n) {
-                                            if ((c == 0 && n > 0) || c > 0) {
-                                                s[A[7]] = B[n];
-                                                fprintf(q, "%s\n", s);
-                                            }
-                                        }
-                                    } else {
-                                        s[A[6]] = B[c];
-                                        if (c < 3)
-                                            for (int n = 0; n < 10; ++n) {
-                                                if ((c == 0 && n > 0) || c > 0) {
-                                                    s[A[7]] = B[n];
-                                                    fprintf(q, "%s\n", s);
-                                                }
-                                            }
-                                        else {
-                                            s[A[7]] = '0';
-                                            fprintf(q, "%s\n", s);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+void perebor_2(int A[10], char *s, int len, int n){
+    if (n == len) {
+        printf("%s\n", s);
+        return;
     }
-    else {
-        for(int p=0; p<4; ++p){
-            s[A[0]] = B[p];
-            for(int l=0; l<10; ++l){
-                if((p== 0 && l>0) || p>0){
-                    if(p==3 && l==0)
-                        s[A[1]] = '0';
-                    else if(p!=3)
-                        s[A[1]] = B[l];
-                    for(int z=0; z<2; ++z){
-                        s[A[2]] = C[z], s[A[5]] = C[z];
-                        for(int m=0; m<2; ++m){
-                            s[A[3]] = B[m];
-                            for(int u=0; u<10; ++u){
-                                if((m==0 && u>0 && u!=2) || (m==1 && u<3) || (m==0 && u==2 && p<3)){
-                                    s[A[4]] = B[u];
-                                    for (int i = 0; i < 10; ++i) {
-                                        s[A[6]] = B[i];
-                                        for (int j = 0; j < 10; ++j) {
-                                            s[A[7]] = B[j];
-                                            for (int k = 0; k < 10; ++k) {
-                                                s[A[8]] = B[k];
-                                                for (int h = 0; h < 10; ++h) {
-                                                    s[A[9]] = B[h];
-                                                    fprintf(q, "%s\n", s);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+    else if (s[n] == '.' || s[n] == '-' || s[n] == '*')
+        perebor_2(A, s, len, n + 1);
+    for (int i = 0; i < 10; ++i) {
+        if (n == A[0] && i < 4) {
+            s[n] = (char) (48 + i);
+        }
+        else if (n == A[1]) {
+            if (s[A[0]] == '0' && i < 9) {
+                s[n] = (char) (49 + i);
+            }
+            else if (s[A[0]] == '1' || s[A[0]] == '2') {
+                s[n] = (char) (48 + i);
+            }
+            else if (s[A[0]] == '3' && i < 2) {
+                s[n] = (char) (48 + i);
             }
         }
+        else if (n == A[3] && i < 2) {
+                s[n] = (char) (48 + i);
+        }
+        else if (n == A[4] && s[A[3]] != '0' && i < 3) {
+            if (s[A[0]] == '3' && s[A[1]] == '1' && (s[A[3]] == '1' && (i == 0 || i == 2))) {
+                s[n] = (char) (48 + i);
+            } else if (s[A[0]] != '3') {
+                s[n] = (char) (48 + i);
+            }
+        }
+        else if (n == A[4] && s[A[3]] == '0' && i < 9){
+                if (s[A[0]] == '3'  && s[A[1]] == '0' && i != 1)
+                    s[n] = (char) (49 + i);
+                else if (s[A[0]] == '3'  && s[A[1]] == '1'
+                         && (i == 0 || i == 2 || i == 4 || i == 6 || i == 7)) {
+                    s[n] = (char) (49 + i);
+                }
+                else if (s[A[0]] != '3') {
+                    s[n] = (char) (49 + i);
+                }
+            }
+        else if (n == A[6] && i < 9) {
+                s[n] = (char) (49 + i);
+        }
+        else if (n == A[7] || n == A[8] || n == A[9]) {
+            s[n] = (char) (48 + i);
+        }
+        else
+            break;
+        perebor_2(A, s, len, n + 1);
     }
 }
 
-int main(int argc, char *argv[]){
-    char path[100], Q[]="/home/daniil/labs/lab1.2/";
-    int a = 0, i = 0, A[10];
+void perebor_1(int A[10], char *s, int len, int n) {
+    if (n == len) {
+        printf("%s\n", s);
+        return;
+    }
+    else if (s[n] == '*')
+        perebor_1(A, s, len, n + 1);
+    for (int i = 0; i < 10; ++i) {
+        if (n == A[0] && i < 9) {
+            s[n] = (char) (49 + i);
+        }
+        else if (n == A[1] || n == A[2] || n == A[3]) {
+            s[n] = (char) (48 + i);
+        }
+        else if (n == A[4] && i < 2) {
+            s[n] = (char) (48 + i);
+        }
+        else if (n == A[5] && s[A[4]] == '0' && i < 9) {
+            s[n] = (char) (49 + i);
+        }
+        else if (n == A[5] && s[A[4]] == '1' && i < 3) {
+            s[n] = (char) (48 + i);
+        }
+        else if (n == A[6] && i < 4) {
+            if (s[A[4]] == '0' && s[A[5]] == '2' && i < 3)
+                s[n] = (char) (48 + i);
+            else
+                s[n] = (char) (48 + i);
+        }
+        else if (n == A[7] && s[A[6]] == '0' && i < 9)
+            s[n] = (char) (49 + i);
+        else if (n == A[7] && s[A[6]] != '3' && s[A[6]] != '0') {
+            if (s[A[4]] == '0' && s[A[5]] == '2' && s[A[6]] == '2' && i < 9)
+                s[n] = (char) (48 + i);
+            else if (s[A[6]] == '1' || s[A[6]] == '2')
+                s[n] = (char) (48 + i);
+        }
+        else if (n == A[7] && s[A[6]] == '3' && i == 0 && ((s[A[4]] == '0' && (s[A[5]] == '4' || s[A[5]] == '6' || s[A[5]] == '9'))
+            || (s[A[4]] == '1' && s[A[5]] == '1')))
+                s[n] = (char) (48 + i);
+        else if (n == A[7] && s[A[6]] == '3' && i < 2 &&
+        ((s[A[4]] == '0' && (s[A[5]] == '1' || s[A[5]] == '3' || s[A[5]] == '5' || s[A[5]] == '7' || s[A[5]] == '8'))
+        || (s[A[4]] == '1' && (s[A[5]] == '0' || s[A[5]] == '2'))))
+            s[n] = (char) (48 + i);
+        else
+            break;
+        perebor_1(A, s, len, n + 1);
+    }
+}
+
+
+int main(int argc, char *argv[]) {
+    int a = 0, i = 0, A[10], len;
     char s[65];
-    strcpy(path, Q), strcat(path, argv[1]);
-    FILE *f = fopen(path, "r+");
-    FILE *q = fopen("/home/daniil/labs/lab1.2/output.txt", "w+");
+    if (argc == 1) 
+	    printf("Error, don`t have path\n");
+    FILE *f = fopen(argv[1], "r+");
     unsigned long long int x = 0b0, y = 0b0;
     while (!feof(f)) {
         a = 0, y = 0b0;
-        fscanf(f, "%llx\n", &x);
-        for (i = 0; i < 64; ++i) {
-            if ((x & ((unsigned long long int) 0b1 << (63 - i))) > 0) {
-                y |= (unsigned long long int) 0b1 << (63 - i);
+        fscanf(f, "%d_%llx\n",&len, &x);
+        for (i = 0; i < len; ++i) {
+            if ((x & ((unsigned long long int) 1 << (len - 1 - i))) > 0) {
+                y |= (unsigned long long int) 1 << (len - 1 - i);
                 A[a] = i;
                 ++a;
-            } else {
+                s[i] = '0';
+            }
+            else {
                 s[i] = '*';
             }
         }
-	printf("64_%llx\n", y);
-        perebor(a, A, q, s);
+        s[len] = '\0';
+        if (a == 10) {
+            s[A[2]] = '.', s[A[5]] = '.';
+            perebor_2(A, s, len, 0);
+            s[A[2]] = '-', s[A[5]] = '-';
+            perebor_2(A, s, len, 0);
+        }
+        else if (a == 8) {
+            perebor_1(A, s, len, 0);
+        }
+        else
+            printf("%s\n", s);
     }
-        fclose(f);
-        fclose(q);
+    fclose(f);
     return 0;
 }
