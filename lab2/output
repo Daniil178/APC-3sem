@@ -1,0 +1,40 @@
+Key[0] = ffffffff
+Key[1] = ffffffff
+Key[2] = 0
+Block[1] xor with key[0] = 0
+Block[1] Round 1:
+c[0] = 63636363
+c[1] = 63636363
+c[2] = 9c9c9c9c
+Block[1] Round 2:
+c[0] = dededede
+c[1] = dededede
+c[2] = dededede
+Block[2] xor with key[0] = 54321000
+Block[2] Round 1:
+c[0] = 2023ca63
+c[1] = 202363ca
+c[2] = dfdc9c35
+Block[2] Round 2:
+c[0] = 9e86de96
+c[1] = 9e8696de
+c[2] = 9e8696de
+Block[3] xor with key[0] = ddeeccbb
+Block[3] Round 1:
+c[0] = c1284bea
+c[1] = c128ea4b
+c[2] = 3ed715b4
+Block[3] Round 2:
+c[0] = b20e598d
+c[1] = b20e8d59
+c[2] = b20e8d59
+Block[4] xor with key[0] = 5555ffff
+Block[4] Round 1:
+c[0] = fcfc1616
+c[1] = fcfc1616
+c[2] = 303e9e9
+Block[4] Round 2:
+c[0] = 7b7b1e1e
+c[1] = 7b7b1e1e
+c[2] = 7b7b1e1e
+dededede9e8696deb20e8d597b7b1e1e
