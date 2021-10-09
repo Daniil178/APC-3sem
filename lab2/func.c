@@ -198,5 +198,40 @@ unsigned long int *cbc(unsigned long int key[3], unsigned long int *p, int len, 
 }
 
 void help() {
-    printf("h, help: for help with argument;\nv, version: get a version;\nm, mode=[value]: choice a mode of enc or dnc(ecb, cbc);\ne, enc: flag for encryption;\nd, dec: flag for decryption;\nk, key=[value]: get key in hex;\ni, iv=[value]: get initialization vector for cbc (в hex);\ng, debug: flag for displaying intermediate values\n");
+    printf("-h, --help: for help with argument;\n-v, --version: get a version;\n-m, --mode=[value]: choice a mode of enc or dnc(ecb, cbc);\n-e, --enc: flag for encryption;\n-d, --dec: flag for decryption;\n-k, --key=[value]: get key in hex;\n-i, --iv=[value]: get initialization vector for cbc (в hex);\n-g, --debug: flag for displaying intermediate values\n-t --timing: for get time of work\n");
+}
+
+unsigned long int *gen_text(unsigned long int *p) {
+    unsigned long int part = 0x0;
+    for (int block = 0; block < 100000; ++block) {
+        part = 0;
+        for (int i = 0; i < 8; ++i) {
+            part |= (unsigned long int) (rand() % 16) << (i * 4);
+        }
+        p[block] = part;
+    }
+    return p;
+}
+
+void cipher_time(unsigned long int key[3], char t, char mode[3], unsigned long int iv) {
+    int len = 100000, number = 50;
+    unsigned long int *txt = calloc(len, sizeof(unsigned long int));
+    double time_total = 0;
+    clock_t time1 = 0;
+    for (int i = 0; i < number; ++i) {
+        txt = gen_text(txt);
+        if (mode[0] == 'c' && mode[1] == 'b' && mode[2] == 'c') {
+            time1 = clock();
+	    txt = cbc(key, txt, len, t, iv, 0);
+	    time1 = clock() - time1;
+        }
+        else {
+	    time1 = clock();
+            txt = ecb(key, txt, len, t, 0);
+	    time1 = clock() - time1;
+        }
+        time_total += (double) time1 / CLOCKS_PER_SEC;
+    }
+    printf("Average time: %.8lf seconds\n", time_total/number);
+    free(txt);
 }
