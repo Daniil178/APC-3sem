@@ -69,16 +69,20 @@ char *fget_str(FILE *f) {
     return res;
 }
 
-void ASCII_to_hex(char *s, unsigned long int *x) {
+int ASCII_to_hex(char *s, unsigned long int *x) {
     int len = (int) strlen(s);
     for (int i = 0; i < len; ++i) {
         if ((int) s[i] > 47 && (int) s[i] < 58) {
             x[i / 8] |= ((unsigned long int) ((int) s[i] - 48)) << (4 * (7 - i % 8));
         }
-        else {
+        else if ((int) s[i] > 96 && (int) s[i] < 103) {
             x[i / 8] |= ((unsigned long int) ((int) s[i] - 87)) << (4 * (7 - i % 8));
         }
+        else {
+            return -1;
+        }
     }
+    return 0;
 }
 
 unsigned long int Invers(unsigned long int k0) {
@@ -232,6 +236,6 @@ void cipher_time(unsigned long int key[3], char t, char mode[3], unsigned long i
         }
         time_total += (double) time1 / CLOCKS_PER_SEC;
     }
-    printf("Average time: %.8lf seconds\n", time_total/number);
+    printf("Average time for 10^5 blocks: %.8lf seconds\n", time_total/number);
     free(txt);
 }

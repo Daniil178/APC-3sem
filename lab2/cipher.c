@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
                     {0, 0, 0, 0}};
     char *path = NULL, t, *info = NULL, *mode = (char *) calloc(3, sizeof(char));
     unsigned long int key = 0, k[3], *p, iv = 0;
-    int len, opt = 0, long_index = 0, g = 0, timing = 0;
+    int len, opt = 0, long_index = 0, g = 0, timing = 0, fl = 0;
     srand(time(NULL));
     while ((opt = getopt_long(argc, argv, ":hvedtgk:m:i:", long_options, &long_index)) != -1) {
                     switch (opt) {
@@ -34,11 +34,18 @@ int main(int argc, char *argv[]) {
                             break;
                     case 'd': t = 'd';
                             break;
-                    case 'k': ASCII_to_hex(optarg, &key);
+                    case 'k': if (ASCII_to_hex(optarg, &key) != 0) {
+                                  printf("Error, incorrect key\n");
+                                  return -1;
+                              }
                             break;
                     case 'm': mode = optarg;
                             break;
-                    case 'i': ASCII_to_hex(optarg, &iv);
+                    case 'i': if (ASCII_to_hex(optarg, &iv) != 0) {
+                                  printf("Error, incorrect IV\n");
+                                  return -1;
+                              }
+                              fl = 1;
                             break;
                     case 'g': g = 1;
                             break;
@@ -54,8 +61,8 @@ int main(int argc, char *argv[]) {
                     path = (char *) calloc(strlen(argv[optind]), sizeof(char));
 		    path = argv[optind];
             }
-    if (path == NULL || key < 0 || (mode[0] == 'c' && mode[1] == 'b' && mode[2] == 'c' && iv == 0)) {
-	printf("Error, please, repeat\nPlease, check your filename, correct key or iv\n");
+    if (path == NULL || (mode[0] == 'c' && mode[1] == 'b' && mode[2] == 'c' && fl == 0)) {
+	printf("Error, check your filename or exist iv\n");
 	//free(mode);
 	return 1;
     }

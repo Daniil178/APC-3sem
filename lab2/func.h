@@ -7,7 +7,7 @@
 
 char *fget_str(FILE *f);
 void help();
-void ASCII_to_hex(char *s, unsigned long int *x);
+int ASCII_to_hex(char *s, unsigned long int *x);
 unsigned long int *gen_text(unsigned long int *p);
 void cipher_time(unsigned long int key[3], char t, char mode[3], unsigned long int iv);
 

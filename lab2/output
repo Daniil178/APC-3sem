@@ -1,1 +1,40 @@
-Error, please, repeat
+Key[0] = 00000000
+Key[1] = 00000000
+Key[2] = 00000000
+Block[1] xor with key[0] = ffffffff
+Block[1] Round 1:
+c[0] = 16161616
+c[1] = 16161616
+c[2] = 16161616
+Block[1] Round 2:
+c[0] = 47474747
+c[1] = 47474747
+c[2] = 47474747
+Block[2] xor with key[0] = abcdefff
+Block[2] Round 1:
+c[0] = 62bddf16
+c[1] = 62bd16df
+c[2] = 62bd16df
+Block[2] Round 2:
+c[0] = aa7a479e
+c[1] = aa7a9e47
+c[2] = aa7a9e47
+Block[3] xor with key[0] = 22113344
+Block[3] Round 1:
+c[0] = 9382c31b
+c[1] = 93821bc3
+c[2] = 93821bc3
+Block[3] Round 2:
+c[0] = dc13af2e
+c[1] = dc132eaf
+c[2] = dc132eaf
+Block[4] xor with key[0] = aaaa0000
+Block[4] Round 1:
+c[0] = acac6363
+c[1] = acac6363
+c[2] = acac6363
+Block[4] Round 2:
+c[0] = 9191fbfb
+c[1] = 9191fbfb
+c[2] = 9191fbfb
+47474747aa7a9e47dc132eaf9191fbfb
