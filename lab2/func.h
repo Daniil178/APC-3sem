@@ -17,3 +17,4 @@ unsigned long int ShiftRows(unsigned long int p);
 unsigned long int AddRoundKey(unsigned long int p, unsigned long int key);
 unsigned long int *ecb(unsigned long int key[3], unsigned long int *p, int len, char t, int g);
 unsigned long int *cbc(unsigned long int key[3], unsigned long int *p, int len, char t, unsigned long int iv, int g);
+unsigned long int *ofb(unsigned long int key[3], unsigned long int *p, int len, unsigned long int iv, int g);

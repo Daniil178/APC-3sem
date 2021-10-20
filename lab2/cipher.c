@@ -2,7 +2,7 @@
 
 int main(int argc, char *argv[]) {
     if (argc == 1) {
-        printf("Incorrect input\nFor example:\n./cipher -m ecb -e -k ffffffff filename > outname\nor\n./cipher –mod=ecb --enc –key=ffffffff filename > outname\n");
+        printf("Incorrect input\nFor example:\n./cipher -m ecb -e -k ffffffff filename > outname\nor\n./cipher --mod=ecb --enc --key=ffffffff filename > outname\n");
         return 0;
     }
     static struct option long_options[] = {
@@ -40,6 +40,13 @@ int main(int argc, char *argv[]) {
                               }
                             break;
                     case 'm': mode = optarg;
+                            if(!((mode[0] == 'e' && mode[1] == 'c' && mode[2] == 'b') || 
+                                 (mode[0] == 'c' && mode[1] == 'b' && mode[2] == 'c') || 
+                                 (mode[0] == 'o' && mode[1] == 'f' && mode[2] == 'b')))
+                            {
+                                printf("Error, incorrect mode\n");
+                                return -1;
+                            }
                             break;
                     case 'i': if (ASCII_to_hex(optarg, &iv) != 0 || strlen(optarg) != 8) {
                                   printf("Error, incorrect IV\n");
@@ -61,7 +68,7 @@ int main(int argc, char *argv[]) {
                     path = (char *) calloc(strlen(argv[optind]), sizeof(char));
 		    path = argv[optind];
             }
-    if (path == NULL || (mode[0] == 'c' && mode[1] == 'b' && mode[2] == 'c' && fl == 0)) {
+    if (path == NULL || (mode[0] == 'c' && mode[1] == 'b' && mode[2] == 'c' && fl == 0) || (mode[0] == 'o' && mode[1] == 'f' && mode[2] == 'b' && fl == 0)) {
 	printf("Error, check your filename or exist iv\n");
 	//free(mode);
 	return 1;
@@ -82,8 +89,10 @@ int main(int argc, char *argv[]) {
     ASCII_to_hex(info, p);
     if (mode[0] == 'c' && mode[1] == 'b' && mode[2] == 'c')
         p = cbc(k, p, len, t, iv, g);
-    else
+    else if (mode[0] == 'e' && mode[1] == 'c' && mode[2] == 'b')
         p = ecb(k, p, len, t, g);
+    else
+        p = ofb(k, p, len, iv, g);
     for (int i = 0; i < len; ++i)
         printf("%08lx", p[i]);
     printf("\n"); 

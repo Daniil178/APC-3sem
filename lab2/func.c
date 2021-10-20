@@ -201,6 +201,26 @@ unsigned long int *cbc(unsigned long int key[3], unsigned long int *p, int len, 
     return p;
 }
 
+unsigned long int *ofb(unsigned long int key[3], unsigned long int *p, int len, unsigned long int iv, int g) {
+     unsigned long int c[3];
+     //if (t == 'e') {
+         for (int block = 0; block < len; ++block) {
+             c[0] = iv;
+             for (int i = 1; i < 3; ++i) {
+                 c[1] = SubBytes(c[0], 'e');
+                 c[2] = ShiftRows(c[1]);
+                 c[0] = AddRoundKey(c[2], key[i]);
+                 if (g == 1) {
+                     printf("Block[%d] Round %d:\n", block + 1, i);
+                     printf("c[0] = %08lx\nc[1] = %08lx\nc[2] = %08lx\n", c[1], c[2], c[0]);
+                 }
+             }
+             iv = c[0];
+             p[block] ^= iv;
+         }
+     return p;
+}
+
 void help() {
     printf("-h, --help: for help with argument;\n-v, --version: get a version;\n-m, --mode=[value]: choice a mode of enc or dnc(ecb, cbc);\n-e, --enc: flag for encryption;\n-d, --dec: flag for decryption;\n-k, --key=[value]: get key in hex;\n-i, --iv=[value]: get initialization vector for cbc (в hex);\n-g, --debug: flag for displaying intermediate values\n-t --timing: for get time of work\n");
 }
@@ -229,10 +249,15 @@ void cipher_time(unsigned long int key[3], char t, char mode[3], unsigned long i
 	    txt = cbc(key, txt, len, t, iv, 0);
 	    time1 = clock() - time1;
         }
-        else {
+        else if (mode[0] == 'e' && mode[1] == 'c' && mode[2] == 'b'){
 	    time1 = clock();
             txt = ecb(key, txt, len, t, 0);
 	    time1 = clock() - time1;
+        }
+        else {
+            time1 = clock();
+            txt = ofb(key, txt, len, iv, 0);
+            time1 = clock() - time1;
         }
         time_total += (double) time1 / CLOCKS_PER_SEC;
     }
