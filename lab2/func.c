@@ -126,14 +126,14 @@ unsigned long int *ecb(unsigned long int key[3], unsigned long int *p, int len, 
     if (t == 'e') {
         for (int block = 0; block < len; ++block) {
             c[0] = key[0] ^ p[block];
-	    if (g == 1) { printf("Block[%d] xor with key[0] = %lx\n", block + 1, c[0]); } 
+	    if (g == 1) { printf("Block[%d] xor with key[0] = %08lx\n", block + 1, c[0]); } 
             for (int i = 1; i < 3; ++i) {
                 c[1] = SubBytes(c[0], t);
                 c[2] = ShiftRows(c[1]);
                 c[0] = AddRoundKey(c[2], key[i]);
 		if (g == 1) {
 		printf("Block[%d] Round %d:\n", block + 1, i);
-		printf("c[0] = %lx\nc[1] = %lx\nc[2] = %lx\n", c[1], c[2], c[0]);
+		printf("c[0] = %08lx\nc[1] = %08lx\nc[2] = %08lx\n", c[1], c[2], c[0]);
 		}
             }
             p[block] = c[0];
@@ -148,7 +148,7 @@ unsigned long int *ecb(unsigned long int key[3], unsigned long int *p, int len, 
                 c[0] = SubBytes(c[2], t);
 		if (g == 1) {
                     printf("Block[%d] Round %d:\n", block + 1, i);
-                    printf("c[0] = %lx\nc[1] = %lx\nc[2] = %lx\n", c[1], c[2], c[0]);
+                    printf("c[0] = %08lx\nc[1] = %08lx\nc[2] = %08lx\n", c[1], c[2], c[0]);
                 }
             }
             p[block] = key[0] ^ c[0];
@@ -163,16 +163,16 @@ unsigned long int *cbc(unsigned long int key[3], unsigned long int *p, int len, 
     if (t == 'e') {
         for (int block = 0; block < len; ++block) {
             c[0] = p[block] ^ iv;
-	    if (g == 1) { printf("Block[%d] xor with iv = %lx\n", block + 1, c[0]); }
+	    if (g == 1) { printf("Block[%d] xor with iv = %08lx\n", block + 1, c[0]); }
             c[0] = c[0] ^ key[0];
-	    if (g == 1) { printf("Block[%d] xor with key[0] = %lx\n", block + 1, c[0]); }
+	    if (g == 1) { printf("Block[%d] xor with key[0] = %08lx\n", block + 1, c[0]); }
             for (int i = 1; i < 3; ++i) {
                 c[1] = SubBytes(c[0], t);
                 c[2] = ShiftRows(c[1]);
                 c[0] = AddRoundKey(c[2], key[i]);
 		if (g == 1) {
                     printf("Block[%d] Round %d:\n", block + 1, i);
-                    printf("c[0] = %lx\nc[1] = %lx\nc[2] = %lx\n", c[1], c[2], c[0]);
+                    printf("c[0] = %08lx\nc[1] = %08lx\nc[2] = %08lx\n", c[1], c[2], c[0]);
                 }
             }
             p[block] = c[0];
@@ -188,11 +188,11 @@ unsigned long int *cbc(unsigned long int key[3], unsigned long int *p, int len, 
                 c[0] = SubBytes(c[2], t);
 		if (g == 1) {
                         printf("Block[%d] Round %d:\n", block + 1, i); 
-                        printf("c[0] = %lx\nc[1] = %lx\nc[2] = %lx\n", c[1], c[2], c[0]);
+                        printf("c[0] = %08lx\nc[1] = %08lx\nc[2] = %08lx\n", c[1], c[2], c[0]);
                 }
             }
             c[0] = c[0] ^ key[0];
-            if (g == 1) { printf("Block[%d] xor with key[0] = %lx\n", block + 1, c[0]); }
+            if (g == 1) { printf("Block[%d] xor with key[0] = %08lx\n", block + 1, c[0]); }
 	    c[0] = c[0] ^ iv;
             iv = p[block];
             p[block] = c[0];
@@ -237,5 +237,6 @@ void cipher_time(unsigned long int key[3], char t, char mode[3], unsigned long i
         time_total += (double) time1 / CLOCKS_PER_SEC;
     }
     printf("Average time for 10^5 blocks: %.8lf seconds\n", time_total/number);
+    printf("Velocity block per second: %d block/s\n", (int)  (100000 / (time_total / number)));
     free(txt);
 }

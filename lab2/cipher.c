@@ -34,14 +34,14 @@ int main(int argc, char *argv[]) {
                             break;
                     case 'd': t = 'd';
                             break;
-                    case 'k': if (ASCII_to_hex(optarg, &key) != 0) {
+                    case 'k': if (ASCII_to_hex(optarg, &key) != 0 || strlen(optarg) != 8) {
                                   printf("Error, incorrect key\n");
                                   return -1;
                               }
                             break;
                     case 'm': mode = optarg;
                             break;
-                    case 'i': if (ASCII_to_hex(optarg, &iv) != 0) {
+                    case 'i': if (ASCII_to_hex(optarg, &iv) != 0 || strlen(optarg) != 8) {
                                   printf("Error, incorrect IV\n");
                                   return -1;
                               }
@@ -91,6 +91,6 @@ int main(int argc, char *argv[]) {
     if (timing == 1) {
         cipher_time(k, t, mode, iv);
     }
-    //free(info), free(p), free(mode), free(path);
+    //free(p), free(mode), free(path);
     return 0;
 }
