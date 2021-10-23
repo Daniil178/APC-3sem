@@ -205,7 +205,7 @@ unsigned long int *ofb(unsigned long int key[3], unsigned long int *p, int len, 
      unsigned long int c[3];
      //if (t == 'e') {
          for (int block = 0; block < len; ++block) {
-             c[0] = iv;
+             c[0] = iv ^ key[0];
              for (int i = 1; i < 3; ++i) {
                  c[1] = SubBytes(c[0], 'e');
                  c[2] = ShiftRows(c[1]);
