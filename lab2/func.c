@@ -85,6 +85,39 @@ int ASCII_to_hex(char *s, unsigned long int *x) {
     return 0;
 }
 
+unsigned long int encryption(unsigned long int key[3], unsigned long int p, int g, int block) {
+	unsigned long int c[3];
+	c[0] = key[0] ^ p;
+             if (g == 1) { printf("Block[%d] xor with key[0] = %08lx\n", block + 1, c[0]); }
+             for (int i = 1; i < 3; ++i) {
+                 c[1] = SubBytes(c[0], 'e');
+                 c[2] = ShiftRows(c[1]);
+                 c[0] = AddRoundKey(c[2], key[i]);
+                 if (g == 1) {
+                 printf("Block[%d] Round %d:\n", block + 1, i);
+                 printf("c[0] = %08lx\nc[1] = %08lx\nc[2] = %08lx\n", c[1], c[2], c[0]);
+                 }
+             }
+	return c[0];
+}
+
+unsigned long int decryption(unsigned long int key[3], unsigned long int p, int g, int block) {
+	unsigned long int c[3];
+	c[0] = p;
+        for (int i = 2; i > 0; --i) {
+            c[1] = AddRoundKey(c[0], key[i]);
+            c[2] = ShiftRows(c[1]);
+            c[0] = SubBytes(c[2], 'd');
+            if (g == 1) {
+                printf("Block[%d] Round %d:\n", block + 1, i);
+                printf("c[0] = %08lx\nc[1] = %08lx\nc[2] = %08lx\n", c[1], c[2], c[0]);
+                }
+        }
+	p = c[0] ^ key[0];
+	if (g == 1) { printf("Block[%d] xor with key[0] = %08lx\n", block + 1, p); }
+	return p;
+}
+
 unsigned long int Invers(unsigned long int k0) {
     unsigned long int k1 = 0b0;
     for (int i = 0; i < 32; ++i) {
@@ -122,39 +155,16 @@ unsigned long int AddRoundKey(unsigned long int p, unsigned long int key) {
 }
 
 unsigned long int *ecb(unsigned long int key[3], unsigned long int *p, int len, char t, int g) {
-    unsigned long int c[3];
     if (t == 'e') {
         for (int block = 0; block < len; ++block) {
-            c[0] = key[0] ^ p[block];
-	    if (g == 1) { printf("Block[%d] xor with key[0] = %08lx\n", block + 1, c[0]); } 
-            for (int i = 1; i < 3; ++i) {
-                c[1] = SubBytes(c[0], t);
-                c[2] = ShiftRows(c[1]);
-                c[0] = AddRoundKey(c[2], key[i]);
-		if (g == 1) {
-		printf("Block[%d] Round %d:\n", block + 1, i);
-		printf("c[0] = %08lx\nc[1] = %08lx\nc[2] = %08lx\n", c[1], c[2], c[0]);
-		}
-            }
-            p[block] = c[0];
+            p[block] = encryption(key, p[block], g, block);
         }
     }
     else {
         for (int block = 0; block < len; ++block) {
-            c[0] = p[block];
-            for (int i = 2; i > 0; --i) {
-                c[1] = AddRoundKey(c[0], key[i]);
-                c[2] = ShiftRows(c[1]);
-                c[0] = SubBytes(c[2], t);
-		if (g == 1) {
-                    printf("Block[%d] Round %d:\n", block + 1, i);
-                    printf("c[0] = %08lx\nc[1] = %08lx\nc[2] = %08lx\n", c[1], c[2], c[0]);
-                }
-            }
-            p[block] = key[0] ^ c[0];
+            p[block] = decryption(key, p[block], g, block);
         }
     }
-
     return p;
 }
 
@@ -164,36 +174,14 @@ unsigned long int *cbc(unsigned long int key[3], unsigned long int *p, int len, 
         for (int block = 0; block < len; ++block) {
             c[0] = p[block] ^ iv;
 	    if (g == 1) { printf("Block[%d] xor with iv = %08lx\n", block + 1, c[0]); }
-            c[0] = c[0] ^ key[0];
-	    if (g == 1) { printf("Block[%d] xor with key[0] = %08lx\n", block + 1, c[0]); }
-            for (int i = 1; i < 3; ++i) {
-                c[1] = SubBytes(c[0], t);
-                c[2] = ShiftRows(c[1]);
-                c[0] = AddRoundKey(c[2], key[i]);
-		if (g == 1) {
-                    printf("Block[%d] Round %d:\n", block + 1, i);
-                    printf("c[0] = %08lx\nc[1] = %08lx\nc[2] = %08lx\n", c[1], c[2], c[0]);
-                }
-            }
-            p[block] = c[0];
+            p[block] = encryption(key, c[0], g, block);
             iv = p[block];
         }
     }
     else {
         for (int block = 0; block < len; ++block) {
-            c[0] = p[block];
-            for (int i = 2; i > 0; --i) {
-                c[1] = AddRoundKey(c[0], key[i]);
-                c[2] = ShiftRows(c[1]);
-                c[0] = SubBytes(c[2], t);
-		if (g == 1) {
-                        printf("Block[%d] Round %d:\n", block + 1, i); 
-                        printf("c[0] = %08lx\nc[1] = %08lx\nc[2] = %08lx\n", c[1], c[2], c[0]);
-                }
-            }
-            c[0] = c[0] ^ key[0];
-            if (g == 1) { printf("Block[%d] xor with key[0] = %08lx\n", block + 1, c[0]); }
-	    c[0] = c[0] ^ iv;
+            c[0] = decryption(key, p[block], g, block);
+            c[0] = c[0] ^ iv;
             iv = p[block];
             p[block] = c[0];
         }
@@ -202,20 +190,9 @@ unsigned long int *cbc(unsigned long int key[3], unsigned long int *p, int len, 
 }
 
 unsigned long int *ofb(unsigned long int key[3], unsigned long int *p, int len, unsigned long int iv, int g) {
-     unsigned long int c[3];
      //if (t == 'e') {
          for (int block = 0; block < len; ++block) {
-             c[0] = iv ^ key[0];
-             for (int i = 1; i < 3; ++i) {
-                 c[1] = SubBytes(c[0], 'e');
-                 c[2] = ShiftRows(c[1]);
-                 c[0] = AddRoundKey(c[2], key[i]);
-                 if (g == 1) {
-                     printf("Block[%d] Round %d:\n", block + 1, i);
-                     printf("c[0] = %08lx\nc[1] = %08lx\nc[2] = %08lx\n", c[1], c[2], c[0]);
-                 }
-             }
-             iv = c[0];
+             iv = encryption(key, iv, g, block);
              p[block] ^= iv;
          }
      return p;
