@@ -40,7 +40,46 @@ int len_find(char *type_c, char *type_h, unsigned char *c, unsigned char *h) {
 	return len;
 }
 
+int def_len(unsigned char type_h, unsigned char type_c, char *hash, char *cipher) {
+	int len = 0;
+	if (type_h == 0x0)
+		memcpy(hash, "md5", 3);
+	else
+		memcpy(hash, "sha1", 4);
+	if (type_c == 0x0) {
+		memcpy(cipher, "3des", 4);
+		len = 21;
+	}
+	else if (type_c == 0x1) {
+		memcpy(cipher, "aes128", 6);
+		len = 16;
+	}
+	else if (type_c == 0x2) {
+		memcpy(cipher, "aes192", 6);
+		len = 24;
+	}
+	else {
+		memcpy(cipher, "aes256", 6);
+		len = 32;
+	}
+	return len;
+}
 
+int check(char *code, char hash, char cipher) {
+	if (code[0] == 'E' && code[1] == 'N' && code[2] == 'C' && ((int) hash == 0 || (int) hash== 1) && ((int) cipher >= 0 && (int) cipher <= 3))
+		return 1;
+	else
+		return 0;
+}
+
+int compare(unsigned char *s1) {
+	int res = 0;
+	for (int i = 0; i < 8; ++i) {
+		if (s1[i] == 0x0)
+			++res;
+	}
+	return (res / 8);
+}
 
 unsigned char *ASCII_to_hhx(char *s, unsigned char *x) {
     int len = (int) strlen(s), j = 0;
@@ -57,6 +96,12 @@ unsigned char *ASCII_to_hhx(char *s, unsigned char *x) {
     return x;
 }
 
+unsigned char *int_to_hhx(int in, unsigned char *x) {
+	for (int i = 0; i < 4; ++i) {
+		x[i] = ((in >> ((3 - i) * 8)) & 0xff);
+	}
+	return x;
+}
 
 unsigned char *gen_text(unsigned char *text, size_t len) {
     unsigned char text1[len];
@@ -195,7 +240,7 @@ void aes128_cbc_decrypt(unsigned char *in, size_t in_len, unsigned char *iv, uns
 
 void aes128_cbc_encrypt(unsigned char *in, size_t in_len, unsigned char *iv, unsigned char *key, unsigned char *out) {
         AES_KEY akey;
-        AES_set_decrypt_key(key, 128, &akey);
+        AES_set_encrypt_key(key, 128, &akey);
         AES_cbc_encrypt(in, out, in_len, &akey, iv, AES_ENCRYPT);
 }
 
@@ -207,7 +252,7 @@ void aes192_cbc_decrypt(unsigned char *in, size_t in_len, unsigned char *iv, uns
 
 void aes192_cbc_encrypt(unsigned char *in, size_t in_len, unsigned char *iv, unsigned char *key, unsigned char *out) {
         AES_KEY akey;
-        AES_set_decrypt_key(key, 192, &akey);
+        AES_set_encrypt_key(key, 192, &akey);
         AES_cbc_encrypt(in, out, in_len, &akey, iv, AES_ENCRYPT);
 }
 
@@ -219,7 +264,7 @@ void aes256_cbc_decrypt(unsigned char *in, size_t in_len, unsigned char *iv, uns
 
 void aes256_cbc_encrypt(unsigned char *in, size_t in_len, unsigned char *iv, unsigned char *key, unsigned char *out) {
         AES_KEY akey;
-        AES_set_decrypt_key(key, 256, &akey);
+        AES_set_encrypt_key(key, 256, &akey);
         AES_cbc_encrypt(in, out, in_len, &akey, iv, AES_ENCRYPT);
 }
 
@@ -234,3 +279,16 @@ unsigned char *encrypt_text(unsigned char *in, size_t in_len, unsigned char *iv,
 		des3_cbc_encrypt(in, in_len, iv, key, cipher_text);
 	return cipher_text;
 }
+
+unsigned char *decrypt_text(unsigned char *in, size_t in_len, unsigned char *iv, unsigned char *key, size_t key_len, unsigned char *open_text) {
+        if (key_len == 16) 
+                aes128_cbc_decrypt(in, in_len, iv, key, open_text);
+        else if (key_len == 24) 
+                aes192_cbc_decrypt(in, in_len, iv, key, open_text);
+        else if (key_len == 32) 
+                aes256_cbc_decrypt(in, in_len, iv, key, open_text);
+        else
+                des3_cbc_decrypt(in, in_len, iv, key, open_text);
+        return open_text;
+}
+

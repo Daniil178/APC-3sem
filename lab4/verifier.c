@@ -1,6 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "func.h"
 
 int main(int argc, char *argv[]) {
 	if (argc != 2) {
@@ -23,8 +21,7 @@ int main(int argc, char *argv[]) {
 		fscanf(f, "%*c");
 		++j;
 	}
-	if (code[0] == 'E' && code[1] == 'N' && code[2] == 'C' && ((int) hash == 0 || (int) hash == 1) && ((int) cip >= 0 && (int) cip <= 3) && (filepath[strlen(filepath) - 3] == 'e' &&
-filepath[strlen(filepath) - 2] == 'n' && filepath[strlen(filepath) - 1] == 'c')) {
+	if (check(code, hash, cip) && (filepath[strlen(filepath) - 3] == 'e' && filepath[strlen(filepath) - 2] == 'n' && filepath[strlen(filepath) - 1] == 'c')) {
 		if (((int) cip == 0 && (j >= 86 && j <=4181)) || ((int) cip == 1 && (j >= 81 && j <=4176)) || ((int) cip == 2 && (j >= 89 && j <=4184)) || ((int) cip == 3 && (j >= 97 && j <=4192)))
 			printf("True\n");
 	}

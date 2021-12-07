@@ -7,19 +7,24 @@ int main(int argc, char *argv[]) {
 	srand(time(NULL));
 	char *hash = argv[2], *cipher = argv[3];
 	char *passw = argv[1], end[] = ".enc";
-	unsigned char opentext[] = "00000000You have successfully decrypted this text";
-	unsigned char nonce[64], *iv, *password = calloc(4, 1), *key, type_c, type_h;
+	int txt_len = 49;
+	unsigned char *opentext = calloc(50, 1);
+	memcpy(opentext + 8, "You have successfully decrypted this text", 42);
+	unsigned char *nonce = calloc(64, 1), *iv, *iv1, *password = calloc(4, 1), *key, type_c, type_h;
 	int len = len_find(cipher, hash, &type_c, &type_h);
 	iv = calloc(len, 1);
+	iv1 = calloc(len, 1);
 	key = calloc(len, 1);
-	unsigned char *c_text = calloc(49, 1);	
+	unsigned char *c_text = calloc(txt_len, 1);	
+	
 	password = ASCII_to_hhx(passw, password);
 	gen_text(nonce, 64);
 	gen_text(iv, len);
-	create_key(password, nonce, len, cipher, key);
-	encrypt_text(opentext, 49, iv, key, len, c_text);
+	memcpy(iv1, iv, len);
+	create_key(password, nonce, len, hash, key);
+	encrypt_text(opentext, (size_t) txt_len, iv, key, (size_t) len, c_text);
 	
-	char *filepath = calloc(strlen(hash) + strlen(cipher) + strlen(passw) + 6, 1);
+	char *filepath = calloc(strlen(hash) + strlen(cipher) + strlen(passw) + 6 + 1, 1);
 	memcpy(filepath, hash, strlen(hash));
 	filepath[strlen(hash)] = '_';
 	memcpy(filepath + strlen(hash) + 1, cipher, strlen(cipher));
@@ -28,8 +33,11 @@ int main(int argc, char *argv[]) {
 	memcpy(filepath + strlen(hash) + 1 + strlen(cipher) + 1 + 8, end, 4);
 	
 	FILE *f = fopen(filepath, "wb");
-	fprintf(f, "ENC%c%c%s%s%s", type_h, type_c, nonce, iv, c_text);
+	fprintf(f, "ENC%c%c", type_h, type_c);
+	fwrite(nonce, sizeof(unsigned char), 64, f);
+	fwrite(iv1, sizeof(unsigned char), len, f);
+	fwrite(c_text, sizeof(unsigned char), txt_len, f);
 	fclose(f);
-	free(password), free(iv), free(key), free(filepath), free(c_text);
+	free(password), free(nonce), free(iv), free(key), free(filepath), free(c_text), free(opentext), free(iv1);
 	return 0;
 }
