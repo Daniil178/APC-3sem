@@ -18,7 +18,7 @@ void sha1(unsigned char *data, size_t data_len, unsigned char *hash) {
 int len_find(char *type_c, char *type_h, unsigned char *c, unsigned char *h) {
 	int len = 0;
 	if (type_c[0] == '3') {
-                len = 21;
+                len = 24;//
 		*c = 0x0;
 	} 
         else if (type_c[3] == '2') {
@@ -48,7 +48,7 @@ int def_len(unsigned char type_h, unsigned char type_c, char *hash, char *cipher
 		memcpy(hash, "sha1", 4);
 	if (type_c == 0x0) {
 		memcpy(cipher, "3des", 4);
-		len = 21;
+		len = 24;//
 	}
 	else if (type_c == 0x1) {
 		memcpy(cipher, "aes128", 6);
@@ -268,24 +268,24 @@ void aes256_cbc_encrypt(unsigned char *in, size_t in_len, unsigned char *iv, uns
         AES_cbc_encrypt(in, out, in_len, &akey, iv, AES_ENCRYPT);
 }
 
-unsigned char *encrypt_text(unsigned char *in, size_t in_len, unsigned char *iv, unsigned char *key, size_t key_len, unsigned char *cipher_text) {
-	if (key_len == 16)
+unsigned char *encrypt_text(unsigned char *in, size_t in_len, unsigned char *iv, unsigned char *key, unsigned char type_c, unsigned char *cipher_text) { //
+	if (type_c == 0x1)
 		aes128_cbc_encrypt(in, in_len, iv, key, cipher_text);
-	else if (key_len == 24)
+	else if (type_c == 0x2)
 		aes192_cbc_encrypt(in, in_len, iv, key, cipher_text);
-	else if (key_len == 32)
+	else if (type_c == 0x3)
 		aes256_cbc_encrypt(in, in_len, iv, key, cipher_text);
 	else
 		des3_cbc_encrypt(in, in_len, iv, key, cipher_text);
 	return cipher_text;
 }
 
-unsigned char *decrypt_text(unsigned char *in, size_t in_len, unsigned char *iv, unsigned char *key, size_t key_len, unsigned char *open_text) {
-        if (key_len == 16) 
+unsigned char *decrypt_text(unsigned char *in, size_t in_len, unsigned char *iv, unsigned char *key, unsigned char type_c, unsigned char *open_text) { //
+        if (type_c == 0x1)
                 aes128_cbc_decrypt(in, in_len, iv, key, open_text);
-        else if (key_len == 24) 
+	else if (type_c == 0x2) 
                 aes192_cbc_decrypt(in, in_len, iv, key, open_text);
-        else if (key_len == 32) 
+        else if (type_c == 0x3) 
                 aes256_cbc_decrypt(in, in_len, iv, key, open_text);
         else
                 des3_cbc_decrypt(in, in_len, iv, key, open_text);

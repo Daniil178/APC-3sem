@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 	gen_text(iv, len);
 	memcpy(iv1, iv, len);
 	create_key(password, nonce, len, hash, key);
-	encrypt_text(opentext, (size_t) txt_len, iv, key, (size_t) len, c_text);
+	encrypt_text(opentext, (size_t) txt_len, iv, key, type_c, c_text);
 	
 	char *filepath = calloc(strlen(hash) + strlen(cipher) + strlen(passw) + 6 + 1, 1);
 	memcpy(filepath, hash, strlen(hash));

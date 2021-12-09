@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
 			memset(key, 0x0, key_len);
 			memset(opentext, 0x0, len_ct);
 			create_key(int_to_hhx(i, pass), nonce, key_len, hash, key);
-			decrypt_text(ct, len_ct, iv, key, key_len, opentext);	
+			decrypt_text(ct, len_ct, iv, key, type_c, opentext);	
 			if (compare(opentext))
 				password &= i;
 		}
@@ -97,8 +97,8 @@ int main(int argc, char *argv[]) {
 			memcpy(iv, iv1, key_len);
 			memset(key, 0x0, key_len);
                 	memset(opentext, 0x0, len_ct);
-                	create_key(int_to_hhx(i, pass), nonce, key_len, hash, key);
-                	decrypt_text(ct, len_ct, iv, key, key_len, opentext);
+                	create_key(int_to_hhx(i, pass), nonce, type_c, hash, key);
+                	decrypt_text(ct, len_ct, iv, key, type_c, opentext);
                  	if (compare(opentext))
                         	password &= i;
         	}

@@ -7,22 +7,6 @@
 #include <openssl/aes.h>
 #include <openssl/des.h>
 
-/*
-#define MD5_LONG unsigned int
-
-#define MD5_CBLOCK 64
-#define MD5_LBLOCK (MD5_CBLOCK / 4)
-#define MD5_DIGEST_LENGTH 16
-
-typedef struct MD5state_st {
-	MD5_LONG A, B, C, D;
-	MD5_LONG Nl, Nh;
-	MD5_LONG data[MD5_LBLOCK];
-	unsigned int num;
-} MD5_CTX;
-*/
-//void md5(unsigned char *data, size_t data_len, unsigned char *hash);
-//void sha1(unsigned char *data, size_t data_len, unsigned char *hash);
 int len_find(char *type_c, char *type_h, unsigned char *c, unsigned char *h);
 int def_len(unsigned char type_h, unsigned char type_c, char *hash, char *cipher);
 int check(char *code, char hash, char cipher);
@@ -41,5 +25,5 @@ void aes192_cbc_decrypt(unsigned char *in, size_t in_len, unsigned char *iv, uns
 void aes192_cbc_encrypt(unsigned char *in, size_t in_len, unsigned char *iv, unsigned char *key, unsigned char *out);
 void aes256_cbc_decrypt(unsigned char *in, size_t in_len, unsigned char *iv, unsigned char *key, unsigned char *out);
 void aes256_cbc_encrypt(unsigned char *in, size_t in_len, unsigned char *iv, unsigned char *key, unsigned char *out);
-unsigned char *encrypt_text(unsigned char *in, size_t in_len, unsigned char *iv, unsigned char *key, size_t key_len, unsigned char *cipher_text);
-unsigned char *decrypt_text(unsigned char *in, size_t in_len, unsigned char *iv, unsigned char *key, size_t key_len, unsigned char *open_text);
+unsigned char *encrypt_text(unsigned char *in, size_t in_len, unsigned char *iv, unsigned char *key, unsigned char type_c, unsigned char *cipher_text);//
+unsigned char *decrypt_text(unsigned char *in, size_t in_len, unsigned char *iv, unsigned char *key, unsigned char type_c, unsigned char *open_text);//
