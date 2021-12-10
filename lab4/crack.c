@@ -21,7 +21,8 @@ int main(int argc, char *argv[]) {
 	
 	char *hash = (char *) calloc(4, 1), *cipher = (char *) calloc(6, 1);
 	unsigned char type_h, type_c, *nonce = (unsigned char *) calloc(64, 1), *iv, *iv1, *ct, *key, *opentext, *pass = calloc(4, 1);
-	int key_len = 0, len_ct = 0, password = 0xffffffff;
+	int key_len = 0, len_ct = 0;
+	unsigned long int password = 0xffffffff;
 	char code[3];
 	FILE *f;
 	if ((f = fopen(filepath, "rb")) == NULL) {
@@ -70,7 +71,7 @@ int main(int argc, char *argv[]) {
 	clock_t time = 0, ptime = 0;
 	time = clock();
 	if (verbose == 0) {
-		for (int i = 0x0; i < 0xffffffff && password == 0xffffffff; ++i) {
+		for (unsigned long int i = 0x0; i < 0xffffffff && password == 0xffffffff; ++i) {
 			memcpy(iv, iv1, key_len);
 			memset(key, 0x0, key_len);
 			memset(opentext, 0x0, len_ct);
@@ -82,7 +83,7 @@ int main(int argc, char *argv[]) {
 	
 	}
 	else {
-		for (int i = 0x0; i < 0xffffffff && password == 0xffffffff; ++i) {
+		for (unsigned long int i = 0x0; i < 0xffffffff && password == 0xffffffff; ++i) {
                 	if (!(i % 0xffff)) {
 				if (i == 0)
 					ptime = clock();
@@ -90,7 +91,7 @@ int main(int argc, char *argv[]) {
 					part_time = (double) (clock() - ptime) / CLOCKS_PER_SEC;
 					if (part_time == 0)
 						part_time = 1; 
-					printf("Current: %08x - %08x | Speed: %d c/s\n", i - 0xffff, i, (int)((double) 0xffff / part_time));
+					printf("Current: %08lx - %08lx | Speed: %d c/s\n", i - 0xffff, i, (int)((double) 0xffff / part_time));
 					ptime = clock();
 				}
 			}
@@ -107,7 +108,7 @@ int main(int argc, char *argv[]) {
 	total_time = (double) time / CLOCKS_PER_SEC;
 	if (total_time == 0)
 		total_time = 1;
-	printf("Found: %08x | Speed: %d c/s\n", password, (int) ((double) password / total_time));
+	printf("Found: %08lx | Speed: %d c/s\n", password, (int) ((double) password / total_time));
 	
 	free(hash), free(cipher), free(iv1), free(nonce), free(iv), free(ct), free(opentext), free(pass);
 	return 0;

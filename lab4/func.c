@@ -83,7 +83,7 @@ int compare(unsigned char *s1) {
 
 unsigned char *ASCII_to_hhx(char *s, unsigned char *x) {
     int len = (int) strlen(s), j = 0;
-    for (int i = len - 1; i > 0; --i) {
+    for (int i = len - 1; i >= 0; --i) {
         if ((int) s[i] >= '0' && (int) s[i] <= '9') {
             x[((len / 2) - 1) - j] |= ((unsigned char) ((int) s[i] - '0')) << (((i + 1) % 2) * 4); 
         }
@@ -96,7 +96,7 @@ unsigned char *ASCII_to_hhx(char *s, unsigned char *x) {
     return x;
 }
 
-unsigned char *int_to_hhx(int in, unsigned char *x) {
+unsigned char *int_to_hhx(unsigned long int in, unsigned char *x) {
 	for (int i = 0; i < 4; ++i) {
 		x[i] = ((in >> ((3 - i) * 8)) & 0xff);
 	}

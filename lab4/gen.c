@@ -16,7 +16,6 @@ int main(int argc, char *argv[]) {
 	iv1 = calloc(len, 1);
 	key = calloc(len, 1);
 	unsigned char *c_text = calloc(txt_len, 1);	
-	
 	password = ASCII_to_hhx(passw, password);
 	gen_text(nonce, 64);
 	gen_text(iv, len);
