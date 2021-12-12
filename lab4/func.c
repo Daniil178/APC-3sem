@@ -186,18 +186,24 @@ unsigned char *create_key(unsigned char *password, unsigned char *nonce, size_t 
 			for (int i = 16; i < key_len - 16; ++i)
 				key[i] = hmac2[i - 16];
 		}
+		free(hmac1), free(hmac2);
 	}
 	else {
 		unsigned char *hmac1 = calloc(20, 1), *hmac2 = calloc(20, 1); 
                 hmac_sha1(nonce, 64, password, 4, hmac1);
-                for (int i = 0; i < 20; ++i)
-                        key[i] = hmac1[i];
+                if (key_len < 20) {
+			for (int i = 0; i < key_len; ++i)
+				key[i] = hmac1[i];
+		}
+		else {
+			for (int i = 0; i < 20; ++i)
+                        	key[i] = hmac1[i];
              
-                if (key_len > 20) {
                         hmac_sha1(hmac1, 20, password, 4, hmac2);
-                        for (int i = 20; i < key_len - 20; ++i)
+                        for (int i = 20; i < key_len; ++i)
                                 key[i] = hmac2[i - 20];
                 }
+		free(hmac1), free(hmac2);
 	}
 	return key;
 }
