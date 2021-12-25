@@ -1,11 +1,12 @@
 #include "func.h"
 
 
-int len_find(char *type_c, char *type_h, unsigned char *c, unsigned char *h) {
+int len_find(char *type_c, char *type_h, unsigned char *c, unsigned char *h, int *block_size) {
 	int len = 0;
 	if (type_c[0] == '3') {
                 len = 24;//
 		*c = 0x0;
+		*block_size = 24;
 	} 
         else if (type_c[3] == '2') {
                 len = 32;
@@ -26,7 +27,7 @@ int len_find(char *type_c, char *type_h, unsigned char *c, unsigned char *h) {
 	return len;
 }
 
-int def_len(unsigned char type_h, unsigned char type_c, char *hash, char *cipher) {
+int def_len(unsigned char type_h, unsigned char type_c, char *hash, char *cipher, int *block_size) {
 	int len = 0;
 	if (type_h == 0x0)
 		memcpy(hash, "md5", 3);
@@ -35,6 +36,7 @@ int def_len(unsigned char type_h, unsigned char type_c, char *hash, char *cipher
 	if (type_c == 0x0) {
 		memcpy(cipher, "3des", 4);
 		len = 24;//
+		*block_size = 24;
 	}
 	else if (type_c == 0x1) {
 		memcpy(cipher, "aes128", 6);

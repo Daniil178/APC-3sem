@@ -9,8 +9,8 @@
 #include <openssl/aes.h>
 #include <openssl/des.h>
 
-int len_find(char *type_c, char *type_h, unsigned char *c, unsigned char *h);
-int def_len(unsigned char type_h, unsigned char type_c, char *hash, char *cipher);
+int len_find(char *type_c, char *type_h, unsigned char *c, unsigned char *h, int *block_size);
+int def_len(unsigned char type_h, unsigned char type_c, char *hash, char *cipher, int *block_size);
 int check(char *code, char hash, char cipher);
 void my_free(void *pointer);
 int compare(unsigned char *s1);

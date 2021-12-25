@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
 	//memcpy(hash, "sha1", 4);
 	//memcpy(cipher, "aes128", 6);
 	unsigned char enc, type_c = 0x1, type_h = 0x1, *opentext = NULL, *ciphtext = NULL, *nonce = NULL, *iv = NULL, *iv1 = NULL, *password = calloc(4, 1), *key = NULL;
-	int len_key = 16, len = 0, opt = 0, long_index = 0, arguments = 0;
+	int len_key = 16, len = 0, block_size = 16, opt = 0, long_index = 0, arguments = 0;
 	FILE *inp, *out;
 	srand(time(NULL));
 	while ((opt = getopt_long(argc, argv, ":p:i:o:h:edv:a:n:l", long_options, &long_index)) != -1) {
@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
 			hash = (char *) calloc(4, 1);
 			memcpy(hash, "sha1", 4);
 		}
-		len_key = len_find(cipher, hash, &type_c, &type_h);
+		len_key = len_find(cipher, hash, &type_c, &type_h, &block_size);
 		if (nonce == NULL) {
                         nonce = calloc(64, 1);
 			gen_text(nonce, 64); 
@@ -99,11 +99,11 @@ int main(int argc, char *argv[]) {
 			my_free(iv1), free(iv), my_free(nonce), free(hash), free(password), free(cipher), my_free(key);
 		return 2;
 		}
-		opentext = calloc(1, 1);
+		opentext = calloc(block_size, 1);
 		while(!feof(inp)) {
-			fread(opentext + len, 1, 1, inp);
-			++len;
-			opentext = (unsigned char *) realloc(opentext, len + 1);	
+			fread(opentext + len, block_size, 1, inp);
+			len += block_size;
+			opentext = (unsigned char *) realloc(opentext, len + block_size);	
 		}
 		fclose(inp);
 		ciphtext = calloc(len, 1);
@@ -130,17 +130,17 @@ int main(int argc, char *argv[]) {
 		}
 		cipher = (char *) calloc(6, 1);
 		hash = (char *) calloc(4, 1);
-		len_key = def_len(type_h, type_c, hash, cipher);
+		len_key = def_len(type_h, type_c, hash, cipher, &block_size);
 		nonce = calloc(64, 1);
 		iv = calloc(len_key, 1);
 		key = calloc(len_key, 1);
-		ciphtext = calloc(1, 1);
+		ciphtext = calloc(block_size, 1);
 		fread(nonce, 64, 1, inp);
 		fread(iv, len_key, 1, inp);
 		while(!feof(inp)) {
-                	fread(ciphtext + len, 1, 1, inp); 
-                	++len;
-                	ciphtext = (unsigned char *) realloc(ciphtext, len + 1); 
+                	fread(ciphtext + len, block_size, 1, inp); 
+                	len += block_size;
+                	ciphtext = (unsigned char *) realloc(ciphtext, len + block_size); 
         	}
 		fclose(inp);
 		opentext = (unsigned char *) calloc(len, 1);
