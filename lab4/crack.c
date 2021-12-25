@@ -37,7 +37,10 @@ int main(int argc, char *argv[]) {
 	key = (unsigned char *) calloc(key_len, 1);
 	hash = (char *) realloc(hash, strlen(hash));
 	cipher = (char *) realloc(cipher, strlen(cipher));
-	ct = (unsigned char *) calloc(1, 1);
+	int block_size = 16;
+	if (type_c == 0x0)
+		block_size = 24;
+	ct = (unsigned char *) calloc(block_size, 1);
 	
 	if (check(code, type_h, type_c))
 		printf("Valid file\n");
@@ -49,9 +52,9 @@ int main(int argc, char *argv[]) {
 	fread(nonce, 64, 1, f);
 	fread(iv, key_len, 1, f);
 	while(!feof(f)) {
-		fread(ct + len_ct, 1, 1, f);
-		++len_ct;
-		ct = (unsigned char *) realloc(ct, len_ct + 1);
+		fread(ct + len_ct, block_size, 1, f);
+		len_ct += block_size;
+		ct = (unsigned char *) realloc(ct, len_ct + block_size);
 	}
 	fclose(f);
 	opentext = (unsigned char *) calloc(len_ct, 1);
@@ -109,7 +112,7 @@ int main(int argc, char *argv[]) {
 	if (total_time == 0)
 		total_time = 1;
 	printf("Found: %08lx | Speed: %d c/s\n", password, (int) ((double) password / total_time));
-	
+	printf("%s\n", opentext + 8);
 	free(hash), free(cipher), free(iv1), free(nonce), free(iv), free(ct), free(opentext), free(pass);
 	return 0;
 }

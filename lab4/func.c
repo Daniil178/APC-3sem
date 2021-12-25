@@ -1,19 +1,10 @@
 #include "func.h"
 
-/*void md5(unsigned char *data, size_t data_len, unsigned char *hash) {
-	MD5_CTX ctx;
-	MD5_Init(&ctx);
-	MD5_Update(&ctx, data, data_len);
-	MD5_Final(hash, &ctx);
-}
 
-void sha1(unsigned char *data, size_t data_len, unsigned char *hash) {
-	SHA_CTX ctx;
-        SHA1_Init(&ctx);
-        SHA1_Update(&ctx, data, data_len);
-        SHA1_Final(hash, &ctx);
+void my_free(void *pointer) {
+	if (pointer != NULL)
+		free(pointer);
 }
-*/
 
 int len_find(char *type_c, char *type_h, unsigned char *c, unsigned char *h) {
 	int len = 0;

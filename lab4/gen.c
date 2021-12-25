@@ -7,8 +7,16 @@ int main(int argc, char *argv[]) {
 	srand(time(NULL));
 	char *hash = argv[2], *cipher = argv[3];
 	char *passw = argv[1], end[] = ".enc";
-	int txt_len = 49;
-	unsigned char *opentext = calloc(50, 1);
+	int txt_len;
+	unsigned char *opentext;
+	if (cipher[0] == '3') {
+		txt_len = 72;
+		opentext = calloc(txt_len, 1);	
+	}
+	else {
+		txt_len = 64;
+		opentext = calloc(txt_len, 1);
+	}
 	memcpy(opentext + 8, "You have successfully decrypted this text", 42);
 	unsigned char *nonce = calloc(64, 1), *iv, *iv1, *password = calloc(4, 1), *key, type_c, type_h;
 	int len = len_find(cipher, hash, &type_c, &type_h);
