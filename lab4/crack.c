@@ -31,15 +31,16 @@ int main(int argc, char *argv[]) {
 	}
 	fscanf(f, "%c%c%c%c%c", code, code + 1, code + 2, &type_h, &type_c);
 	key_len = def_len(type_h, type_c, hash, cipher);
+	int block_size = 16; 
+        if (type_c == 0x0)
+                block_size = 8;
 	
-	iv = (unsigned char *) calloc(key_len, 1);
-	iv1 = (unsigned char *) calloc(key_len, 1);
+	iv = (unsigned char *) calloc(block_size, 1);
+	iv1 = (unsigned char *) calloc(block_size, 1);
 	key = (unsigned char *) calloc(key_len, 1);
 	hash = (char *) realloc(hash, strlen(hash));
 	cipher = (char *) realloc(cipher, strlen(cipher));
-	int block_size = 16;
-	if (type_c == 0x0)
-		block_size = 24;
+
 	ct = (unsigned char *) calloc(block_size, 1);
 	
 	if (check(code, type_h, type_c))
@@ -50,7 +51,7 @@ int main(int argc, char *argv[]) {
 	}
 	printf("hmac_%s, %s\n", hash, cipher);
 	fread(nonce, 64, 1, f);
-	fread(iv, key_len, 1, f);
+	fread(iv, block_size, 1, f);
 	while(!feof(f)) {
 		fread(ct + len_ct, block_size, 1, f);
 		len_ct += block_size;
@@ -63,19 +64,19 @@ int main(int argc, char *argv[]) {
 	for (int i = 0; i < 64; ++i)
 		printf("%02hhx", nonce[i]);
 	printf("\niv: ");
-	for (int i = 0; i < key_len; ++i)
+	for (int i = 0; i < block_size; ++i)
 		printf("%02hhx", iv[i]);
 	printf("\n CT: ");
 	for (int i = 0; i < len_ct; ++i)
 		printf("%02hhx", ct[i]);
 	printf("\n\nStart cracking\n");
-	memcpy(iv1, iv, key_len);
+	memcpy(iv1, iv, block_size);
 	double total_time = 0, part_time = 0;
 	clock_t time = 0, ptime = 0;
 	time = clock();
 	if (verbose == 0) {
 		for (unsigned long int i = 0x0; i < 0xffffffff && password == 0xffffffff; ++i) {
-			memcpy(iv, iv1, key_len);
+			memcpy(iv, iv1, block_size);
 			memset(key, 0x0, key_len);
 			memset(opentext, 0x0, len_ct);
 			create_key(int_to_hhx(i, pass), nonce, key_len, hash, key);
@@ -98,7 +99,7 @@ int main(int argc, char *argv[]) {
 					ptime = clock();
 				}
 			}
-			memcpy(iv, iv1, key_len);
+			memcpy(iv, iv1, block_size);
 			memset(key, 0x0, key_len);
                 	memset(opentext, 0x0, len_ct);
                 	create_key(int_to_hhx(i, pass), nonce, key_len, hash, key);
