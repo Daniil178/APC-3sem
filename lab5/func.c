@@ -6,7 +6,7 @@ int len_find(char *type_c, char *type_h, unsigned char *c, unsigned char *h, int
 	if (type_c[0] == '3') {
                 len = 24;//
 		*c = 0x0;
-		*block_size = 24;
+		*block_size = 8;
 	} 
         else if (type_c[3] == '2') {
                 len = 32;
@@ -36,7 +36,7 @@ int def_len(unsigned char type_h, unsigned char type_c, char *hash, char *cipher
 	if (type_c == 0x0) {
 		memcpy(cipher, "3des", 4);
 		len = 24;//
-		*block_size = 24;
+		*block_size = 8;
 	}
 	else if (type_c == 0x1) {
 		memcpy(cipher, "aes128", 6);

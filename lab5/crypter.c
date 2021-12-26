@@ -24,8 +24,6 @@ int main(int argc, char *argv[]) {
 		    {"help", no_argument, 0, 'l'},
                     {0, 0, 0, 0}};
 	char *input_path = NULL, *output_path = NULL, *hash = NULL, *cipher = NULL, code[3];
-	//memcpy(hash, "sha1", 4);
-	//memcpy(cipher, "aes128", 6);
 	unsigned char enc, type_c = 0x1, type_h = 0x1, *opentext = NULL, *ciphtext = NULL, *nonce = NULL, *iv = NULL, *iv1 = NULL, *password = calloc(4, 1), *key = NULL;
 	int len_key = 16, len = 0, block_size = 16, opt = 0, long_index = 0, arguments = 0;
 	FILE *inp, *out;
@@ -86,12 +84,12 @@ int main(int argc, char *argv[]) {
 			gen_text(nonce, 64); 
                 }
 		if (iv == NULL) {
-                        iv = calloc(len_key, 1);
-                	gen_text(iv, len_key);
+                        iv = calloc(block_size, 1);
+                	gen_text(iv, block_size);
 		}
 		key = calloc(len_key, 1);
-		iv1 = calloc(len_key, 1);
-		memcpy(iv1, iv, len_key);
+		iv1 = calloc(block_size, 1);
+		memcpy(iv1, iv, block_size);
 		create_key(password, nonce, len_key, hash, key);
 		
 		if ((inp = fopen(input_path, "r")) == NULL) {
@@ -111,7 +109,7 @@ int main(int argc, char *argv[]) {
 		out = fopen(output_path, "wb");
 		fprintf(out, "ENC%c%c", type_h, type_c);
         	fwrite(nonce, sizeof(unsigned char), 64, out); 
-        	fwrite(iv1, sizeof(unsigned char), len_key, out); 
+        	fwrite(iv1, sizeof(unsigned char), block_size, out); 
         	fwrite(ciphtext, sizeof(unsigned char), len, out); 
 		fclose(out);	
 	}
@@ -132,11 +130,11 @@ int main(int argc, char *argv[]) {
 		hash = (char *) calloc(4, 1);
 		len_key = def_len(type_h, type_c, hash, cipher, &block_size);
 		nonce = calloc(64, 1);
-		iv = calloc(len_key, 1);
+		iv = calloc(block_size, 1);
 		key = calloc(len_key, 1);
 		ciphtext = calloc(block_size, 1);
 		fread(nonce, 64, 1, inp);
-		fread(iv, len_key, 1, inp);
+		fread(iv, block_size, 1, inp);
 		while(!feof(inp)) {
                 	fread(ciphtext + len, block_size, 1, inp); 
                 	len += block_size;
