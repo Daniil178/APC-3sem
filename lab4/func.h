@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <sys/times.h>
+#include <sys/wait.h>
+#include <unistd.h>
 #include <openssl/md5.h>
 #include <openssl/sha.h>
 #include <openssl/aes.h>
